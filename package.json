@@ -1,0 +1,21 @@
+{
+  "name": "pocket-stats",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "es6-promise": "^4.2.5",
+    "express": "^4.16.4",
+    "isomorphic-fetch": "^2.2.1"
+  },
+  "devDependencies": {
+    "prettier": "^1.16.4"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
