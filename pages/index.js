@@ -1,26 +1,40 @@
 import 'react'
 import 'isomorphic-fetch'
-import { Card, Heading, Text } from 'rimble-ui'
+import { Card, Heading } from 'rimble-ui'
 import styled from 'styled-components'
+import * as service from '../server/service'
 
-const API_URL = 'http://localhost:8888'
+const consumerKey = process.env.CONSUMER_KEY
+const host = process.env.HOST || 'http://localhost'
+const port = process.env.PORT || 8888
+const appUrl = `${host}:${port}`
 
-function Index({ unread = 0 }) {
-  return (
-    <Page>
-      <Card width={'420px'} mx={'auto'} px={4} border={0}>
-        <Heading>Unread</Heading>
-        <Number>{unread}</Number>
-      </Card>
-    </Page>
-  )
-}
+class Index extends React.Component {
+  static getInitialProps = async ({ req, res }) => {
+    const { session } = req
+    const { accessToken } = session
 
-Index.getInitialProps = async ({ req }) => {
-  const res = await fetch(`${API_URL}/api/unread/d7e17371-3d12-6666-8fb4-362ed5`)
-  const json = await res.json()
-  const { unread } = json
-  return { unread }
+    try {
+      const items = await service.retrieveData(consumerKey, accessToken)
+      return { unread: items.length }
+    } catch (error) {
+      res.writeHead(302, { Location: `${appUrl}/api/login` })
+      res.end()
+      return {}
+    }
+  }
+
+  render() {
+    const { unread = 0 } = this.props
+    return (
+      <Page>
+        <Card width={'420px'} mx={'auto'} px={4} border={0}>
+          <Heading>Unread</Heading>
+          <Number>{unread}</Number>
+        </Card>
+      </Page>
+    )
+  }
 }
 
 const Page = styled.div`

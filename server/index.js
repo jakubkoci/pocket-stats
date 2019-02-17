@@ -1,44 +1,51 @@
 require('dotenv').config()
 const express = require('express')
 const next = require('next')
+const cookieSession = require('cookie-session')
 const service = require('./service')
 
 const consumerKey = process.env.CONSUMER_KEY
+const host = process.env.HOST || 'http://localhost'
 const port = process.env.PORT || 8888
-const dev = process.env.NODE_ENV !== "production";
+const sessionSecret = process.env.SESSION_SECRET
+const appUrl = `${host}:${port}`
+const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
-const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
   const server = express()
 
+  server.use(
+    cookieSession({
+      secret: sessionSecret,
+      name: 'sessionId',
+    })
+  )
+
   server.get('/api/login', async (req, res) => {
-    const accessToken = null
-    if (!accessToken) {
-      const redirectUri = `http://localhost:${port}/api/auth`
-      const { requestToken } = await service.getRequestToken(consumerKey, redirectUri)
-      res.redirect(
-        `https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}?requestToken=${requestToken}`
-      )
-    } else {
-      res.status(200).send(`Already logged in with access token: ${accessToken}`)
-    }
+    const redirectUri = `${appUrl}/api/auth`
+    const { requestToken } = await service.getRequestToken(consumerKey, redirectUri)
+    res.redirect(
+      `https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}?requestToken=${requestToken}`
+    )
   })
 
   server.get('/api/auth', async (req, res) => {
-    const requestToken = req.query.requestToken
-    const { accessToken, username } = await service.getAccessToken(consumerKey, requestToken)
-    res.json({ accessToken, username })
+    const { session, query } = req
+    const { requestToken } = query
+    const { accessToken } = await service.getAccessToken(consumerKey, requestToken)
+    session.accessToken = accessToken
+    res.redirect('/')
   })
 
-  server.get('/api/unread/:accessToken', async (req, res) => {
-    const accessToken = req.params.accessToken
-    const items = await service.retrieveData(consumerKey, accessToken)
-    res.json({ unread: items.length })
-  })
-
-  server.get('*', (req, res) => {
-    return handle(req, res)
+  server.get('/', async (req, res) => {
+    const { session } = req
+    const { accessToken } = session
+    if (!accessToken) {
+      res.redirect('/api/login')
+    } else {
+      return app.render(req, res, '/index')
+    }
   })
 
   server.listen(port, () => {
