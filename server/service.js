@@ -66,7 +66,7 @@ async function post(url, payload) {
   }
 
   const json = await response.json()
-  console.log('post response', json)
+  console.log('post response', response.status, response.statusText)
   return json
 }
 

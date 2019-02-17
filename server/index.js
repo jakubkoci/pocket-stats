@@ -38,7 +38,6 @@ app.prepare().then(() => {
   })
 
   server.get('*', (req, res) => {
-    console.log(req, res)
     return handle(req, res)
   })
 
