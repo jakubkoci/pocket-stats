@@ -2,12 +2,10 @@ import 'react'
 import 'isomorphic-fetch'
 import { Card, Heading } from 'rimble-ui'
 import styled from 'styled-components'
+import { getAppConfig } from '../server/config'
 import * as service from '../server/service'
 
-const consumerKey = process.env.CONSUMER_KEY
-const host = process.env.HOST || 'http://localhost'
-const port = process.env.PORT || 8888
-const appUrl = `${host}:${port}`
+const { appUrl, consumerKey } = getAppConfig()
 
 class Index extends React.Component {
   static getInitialProps = async ({ req, res }) => {

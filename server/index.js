@@ -3,13 +3,10 @@ const express = require('express')
 const next = require('next')
 const cookieSession = require('cookie-session')
 const service = require('./service')
+const config = require('./config')
 
-const consumerKey = process.env.CONSUMER_KEY
-const host = process.env.HOST || 'http://localhost'
-const port = process.env.PORT || 8888
-const sessionSecret = process.env.SESSION_SECRET
-const appUrl = `${host}:${port}`
 const dev = process.env.NODE_ENV !== 'production'
+const { appUrl, port, sessionSecret, consumerKey } = config.getAppConfig()
 const app = next({ dev })
 
 app.prepare().then(() => {

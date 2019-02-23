@@ -1,0 +1,56 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:carbon-stretch-browsers
+
+    steps:
+      - checkout
+      - run: echo "hello world"
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: yarn build
+      - run: pwd
+      - run: ls -la
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .next
+            - Dockerfile
+            - run.sh
+            - package.json
+      - run: ls -la
+
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - run: echo 'Deploying...'
+      - attach_workspace:
+          at: ~/project
+      - run: pwd
+      - run: ls -la
+      - run: scp -vr ~/project/.next ~/project/* kuba@159.89.28.202:/home/kuba/www/pocket-stats
+      - run: ssh -v kuba@159.89.28.202 "cd ~/www; sudo ./deploy.sh"
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
