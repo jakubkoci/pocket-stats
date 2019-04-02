@@ -1,0 +1,23 @@
+body { 
+  margin: 0;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  color: #313131;
+  background-color: #f4f4f6;
+}
+
+section {
+  width: 400px;
+  margin: 100px auto;
+  padding: 2em;
+  background-color: white;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+section div {
+  font-size: 10em;
+  text-align: center;
+  color: #801010;
+}
