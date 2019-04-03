@@ -3,7 +3,9 @@ window.onload = async () => {
   const json = await response.json()
   console.log(json)
 
-  const unreadArticlesComponent = document.querySelector('#unread')
-  console.log('unreadArticlesComponent', unreadArticlesComponent)
-  unreadArticlesComponent.innerText = json.unread
+  if (!json.error) {
+    const unreadArticlesComponent = document.querySelector('#unread')
+    console.log('unreadArticlesComponent', unreadArticlesComponent)
+    unreadArticlesComponent.innerText = json.unread
+  }
 }

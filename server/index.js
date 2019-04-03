@@ -18,9 +18,9 @@ server.use(
 )
 
 const publicAssetsDirectory = path.join(__dirname, '..', 'public')
-server.use(express.static(publicAssetsDirectory))
-
 console.log('publicAssetsDirectory', publicAssetsDirectory)
+
+server.use('/static', express.static(publicAssetsDirectory))
 
 server.get('/api/login', async (req, res) => {
   const redirectUri = `${appUrl}/api/auth`
@@ -41,11 +41,12 @@ server.get('/api/auth', async (req, res) => {
 server.get('/api/data', async (req, res) => {
   const { session } = req
   const { accessToken } = session
-  if (!accessToken) {
-    res.redirect('/api/login')
-  } else {
+  try {
     const items = await service.retrieveData(consumerKey, accessToken)
     res.json({ unread: items.length })
+  } catch (error) {
+    res.status(500)
+    res.json({ error: { message: 'Authorization error' } })
   }
 })
 
