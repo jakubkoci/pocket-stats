@@ -28,7 +28,7 @@ jobs:
       - persist_to_workspace:
           root: ~/project
           paths:
-            - .next
+            - .bundle
             - Dockerfile
             - run.sh
             - package.json
@@ -43,7 +43,7 @@ jobs:
           at: ~/project
       - run: pwd
       - run: ls -la
-      - run: scp -vr ~/project/.next ~/project/* kuba@159.89.28.202:/home/kuba/www/pocket-stats
+      - run: scp -vr ~/project/.bundle ~/project/* kuba@159.89.28.202:/home/kuba/www/pocket-stats
       - run: ssh -v kuba@159.89.28.202 "cd ~/www; sudo ./deploy.sh"
 
 workflows:

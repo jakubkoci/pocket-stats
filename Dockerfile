@@ -4,7 +4,7 @@ FROM node:carbon
 WORKDIR /usr/src/app
 
 COPY run.sh run.sh
-COPY .next .next
+COPY .bundle .bundle
 
 CMD ["/bin/bash", "-c", "/usr/src/app/run.sh"]
 
