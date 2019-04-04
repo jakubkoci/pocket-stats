@@ -1,5 +1,6 @@
 require('es6-promise').polyfill()
 require('isomorphic-fetch')
+const { AuthorizationError } = require('./errors')
 
 const apiUrl = process.env.API_URL
 
@@ -62,6 +63,10 @@ async function post(url, payload) {
   if (response.status !== 200) {
     const errorMessage = `${response.status} - ${response.statusText}`
     console.log(errorMessage)
+
+    if (response.status === 401) {
+      throw new AuthorizationError(errorMessage)
+    }
     throw new Error(errorMessage)
   }
 
