@@ -30,13 +30,9 @@ async function getAccessToken(consumerKey, requestToken) {
 }
 
 async function retrieveData(consumerKey, accessToken) {
-  // Confirm Your Email Address, po 5. 8. 2013 11:42
-  const sinceDate = new Date('2013-08-01T00:00Z')
   const payload = {
     consumer_key: consumerKey,
     access_token: accessToken,
-    // count: 20,
-    since: Math.round(sinceDate.getTime() / 1000), // UNIX timestamp is in seconds, but getTime() returns miliseconds
     detailType: 'simple',
     state: 'unread',
     sort: 'newest',
